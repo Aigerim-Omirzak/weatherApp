@@ -43,6 +43,9 @@
         .map-container {
             width: 600px;
             height: 600px;
+            background-color: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(30px);
+            border: 2px solid rgba(255, 255, 255, 0.2);
         }
 
         #map {
@@ -79,6 +82,13 @@
         .desc{
             color: #ffffff;
         }
+
+        .card{
+            background-color: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(30px);
+            border: 2px solid rgba(255, 255, 255, 0.2);
+            color: #ffffff;
+        }
         
     </style>
 </head>
@@ -103,8 +113,11 @@
                         <p> <i class='bx bx-book'></i> Description: <%= weatherData.weather[0].description %></p>
                         <p> <i class="bx bx-water"></i> Humidity: <%= weatherData.main.humidity %>%</p>
                         <p> <i class="bx bx-wind"></i> Wind Speed: <%= weatherData.wind.speed %> km/h</p>
-                        <p> <i class='bx bx-cloud-rain' ></i> <%= weatherData.rain ? 'Rain Volume: ' + weatherData.rain['3h'] + ' mm' : 'No rain data' %></p>
-                        </div>
+                        <% if (weatherData.hasOwnProperty('rain') && weatherData.rain.hasOwnProperty('3h')) { %>
+                            <p> <i class='bx bx-cloud-rain' ></i> Rain (last 3 hours): <%= weatherData.rain['3h'] %> mm</p>
+                        <% } else { %>
+                            <p> <i class='bx bx-cloud-rain' ></i> Rain (last 3 hours): N/A</p>
+                        <% } %>                        </div>
                     </div>
                 <% } %>
             </form>
@@ -130,13 +143,18 @@
                 <% } %>
             </div>
             <% if (typeof weatherData !== 'undefined') { %>
-            <h2>Real Time in <%= weatherData.name %></h2>
+            <h2></h2>
             <div class="card">
                 <div class="card-body">
-                    
-                    <strong><%= timeData.timezone %></strong>
-                    <p><%= timeData.datetime %></p>
-                    
+                    <h2>Time Information for <%= weatherData.name %></h2>
+                    <% if (localTime) { %>
+                        <p><i class='bx bx-time-five' ></i> Local Time: <%= localTime %></p>
+                        <p><i class='bx bx-calendar' ></i> Date: <%= new Date().toISOString().slice(0, 10) %></p>
+                    <% } else { %>
+                        <p>Unable to fetch local time</p>
+                    <% } %>
+                <% } else if (weatherData === null) { %>
+                    <p>City not found</p>
                 </div>
             </div>
             <% } %>
